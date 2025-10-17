@@ -1,1 +1,1 @@
-# dotnet-hello o
+# dotnet-hello
