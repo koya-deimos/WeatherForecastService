@@ -109,6 +109,73 @@ app.MapGet("api/v2/error", (ILogger<Program> logger) =>
     ", "text/html");
 });
 
+app.MapGet("api/v2/test-exception", (ILogger<Program> logger) =>
+{
+    try
+    {
+        logger.LogInformation("Attempting a risky operation...");
+
+        // Simulate an actual exception (DivideByZero)
+        int numerator = 10;
+        int denominator = 0;
+        int result = numerator / denominator; 
+
+        return Results.Ok(new { Result = result });
+    }
+    catch (Exception ex)
+    {
+        // Log the full Exception object (includes Stack Trace)
+        logger.LogError(ex, "An unhandled exception occurred during the test-exception request.");
+
+        var now = DateTime.UtcNow;
+        return Results.Content(@$"
+            <html>
+            <head><link rel='stylesheet' href='https://cdn.simplecss.org/simple-v1.css'></head>
+            <body>
+                <h1 style='color: #d9534f;'>500 - Server Error</h1>
+                <p><strong>Logged at:</strong> {now:u}</p>
+                <p><strong>Error Message:</strong> {ex.Message}</p>
+                <hr>
+                <p>The error has been recorded in the application logs.</p>
+            </body>
+            </html>", "text/html");
+    }
+});
+
+app.MapGet("api/v2/null-error", (ILogger<Program> logger) =>
+{
+    try
+    {
+        logger.LogInformation("Processing request that will trigger a NullReferenceException.");
+
+        // 1. Create a null object
+        List<string>? myData = null;
+
+        // 2. Attempt to access a property on it (this triggers the exception)
+        int count = myData.Count; 
+
+        return Results.Ok(new { Total = count });
+    }
+    catch (NullReferenceException ex)
+    {
+        // Log specifically that a null was encountered
+        logger.LogError(ex);
+
+        var now = DateTime.UtcNow;
+        return Results.Content(@$"
+            <html>
+            <head><link rel='stylesheet' href='https://cdn.simplecss.org/simple-v1.css'></head>
+            <body>
+                <h1 style='color: #d9534f;'>Null Reference Detected</h1>
+                <p><strong>Time (UTC):</strong> {now:u}</p>
+                <p><strong>Technical Detail:</strong> {ex.Message}</p>
+                <p>Check your console/logs to see the <code>StackTrace</code>.</p>
+                <a href='/'>Return Home</a>
+            </body>
+            </html>", "text/html");
+    }
+});
+        
 app.MapGet("api/v2/warning", (ILogger<Program> logger) =>
 {
     logger.LogWarning("the page");
