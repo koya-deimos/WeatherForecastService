@@ -159,7 +159,7 @@ app.MapGet("api/v2/null-error", (ILogger<Program> logger) =>
     catch (NullReferenceException ex)
     {
         // Log specifically that a null was encountered
-        logger.LogError(ex);
+        logger.LogError(ex, ex.Message);
 
         var now = DateTime.UtcNow;
         return Results.Content(@$"
