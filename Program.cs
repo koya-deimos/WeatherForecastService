@@ -111,9 +111,8 @@ app.MapGet("api/v2/error", (ILogger<Program> logger) =>
 
 app.MapGet("api/v2/division", (ILogger<Program> logger) =>
 {
-    try
-    {
-        logger.LogInformation("Division");
+   
+        logger.LogInformation("Performing Division");
 
         // Simulate an actual exception (DivideByZero)
         int numerator = 10;
@@ -121,7 +120,6 @@ app.MapGet("api/v2/division", (ILogger<Program> logger) =>
         int result = numerator / denominator; 
 
         return Results.Ok(new { Result = result });
-    }
    
 });
 
