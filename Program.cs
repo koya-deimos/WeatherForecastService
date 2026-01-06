@@ -109,11 +109,11 @@ app.MapGet("api/v2/error", (ILogger<Program> logger) =>
     ", "text/html");
 });
 
-app.MapGet("api/v2/test-exception", (ILogger<Program> logger) =>
+app.MapGet("api/v2/division", (ILogger<Program> logger) =>
 {
     try
     {
-        logger.LogInformation("Attempting a risky operation...");
+        logger.LogInformation("Division");
 
         // Simulate an actual exception (DivideByZero)
         int numerator = 10;
@@ -122,24 +122,7 @@ app.MapGet("api/v2/test-exception", (ILogger<Program> logger) =>
 
         return Results.Ok(new { Result = result });
     }
-    catch (Exception ex)
-    {
-        // Log the full Exception object (includes Stack Trace)
-        logger.LogError(ex, "An unhandled exception occurred during the test-exception request.");
-
-        var now = DateTime.UtcNow;
-        return Results.Content(@$"
-            <html>
-            <head><link rel='stylesheet' href='https://cdn.simplecss.org/simple-v1.css'></head>
-            <body>
-                <h1 style='color: #d9534f;'>500 - Server Error</h1>
-                <p><strong>Logged at:</strong> {now:u}</p>
-                <p><strong>Error Message:</strong> {ex.Message}</p>
-                <hr>
-                <p>The error has been recorded in the application logs.</p>
-            </body>
-            </html>", "text/html");
-    }
+   
 });
 
 app.MapGet("api/v2/null-error", (ILogger<Program> logger) =>
